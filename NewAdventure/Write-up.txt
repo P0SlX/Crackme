@@ -1,0 +1,85 @@
+This version of Adventure is the complete one, the old one is missing one step. Gonna try the 3rd chap' soon
+
+I'm going to use ltrace just as the first version of adventure
+So, first 
+    $   ltrace ./adventure hello
+
+        $   Welcome to the very easy adventure 
+        $   A serie of challenge you can only solve by disassembling. 
+        $   Good luck ! the 1st challenge already started !
+
+        $   * After being sumonned from another world, you're going to the adventurer's guild
+        $   * A gold ranked adventurer is guarding the door... you're heading toward him...
+
+        $   "Friendly greetings to you. I never saw you here before !" What's the purpose of your visit ?
+then,
+    $   ./adventure
+
+        $   "./adventure ? Good, good, welcome to the guild hall!"
+
+        $   -------
+        $   * you enter the guild hall
+        $   * In front of you is the bar
+        $   * To the left is the registration office
+        $   * To the right you see the adventure desk and a panel with quest waiting to be accepted
+
+        $   Where do you go ?
+
+Enter a random thing and see to what it is compared to with strcmp();
+aaaand here it is: To the left
+
+    $   Where do you go ?
+    $   To the left
+    $   "Welcome to the registration office!"
+
+This was very easy and without the need of decompiling the program, it's maybe cheating but I got it right tho...
+
+
+
+For the second one, I used Ghidra and gdb
+
+First let's execute without args
+
+    Press enter the first time bc it does nothing
+    Then if we look at Ghidra, we can see that it got a getchar() and verify if the value is equal to 0x48 which is a "H" in hex
+    then if it is equal to an "e"
+    then a "l", twice..
+    and an "o"..... Hello
+    press enter twice and we are in the step 2 !
+
+(We can go directly to step 2 with arg between 200 and 299)
+(Like for ex: ./adventure2 236)
+
+STEP 2:
+
+    For the second step I will be using 200 as arg 
+    When it ask "By the way, what argument did you use to come here ?"
+    Just press enter twice (not working if you don't provide arg when exec the program)
+
+    It shows this:
+
+        - So you want to register to the guild ? Math question then !
+        - it's totally not because i'm lazy or anything ! Bakkaaaa~ !
+        what's 
+         + 3 * 5 ? 
+
+    To know what value it requires I used gdb and break at the step2
+
+        $ gdb ./adventure2
+        $ set disassenbly-flavor intel (bc AT&T is a total mess)
+        $ break *step2
+
+    We can see that the value is calculated at 0x...ee0, so we can use "ni" to reach this value and check the register at this adress
+
+        $ ni
+
+    press enter until we reach ee0 and check the register
+
+        $ info registers
+    
+    BINGO ! RAX is at 65, soooooo go test it !
+
+    enter 65 when it ask "+ 3 * 5 ?"
+
+    voilà !
+    This was not the hardest one but it was fun for sure !!
